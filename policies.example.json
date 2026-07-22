@@ -1,0 +1,22 @@
+[
+  {
+    "name": "api-default",
+    "algorithm": "TOKEN_BUCKET",
+    "limit": 100,
+    "windowSeconds": 60,
+    "refillRate": 100
+  },
+  {
+    "name": "login-attempts",
+    "algorithm": "SLIDING_WINDOW_COUNTER",
+    "limit": 5,
+    "windowSeconds": 300
+  },
+  {
+    "name": "webhook-smoothing",
+    "algorithm": "LEAKY_BUCKET",
+    "limit": 20,
+    "windowSeconds": 10,
+    "leakRate": 20
+  }
+]

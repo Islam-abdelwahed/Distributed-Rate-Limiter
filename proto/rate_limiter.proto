@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package ratelimiter;
+
+service RateLimiterService {
+
+  rpc CheckLimit(CheckLimitRequest) returns (CheckLimitResponse);
+
+  rpc ResetLimit(ResetLimitRequest) returns (ResetLimitResponse);
+
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+}
+
+enum Algorithm {
+  ALGORITHM_UNSPECIFIED  = 0;
+  TOKEN_BUCKET           = 1;
+  SLIDING_WINDOW_COUNTER = 2;
+  LEAKY_BUCKET           = 3;
+}
+
+message RateLimitPolicy {
+  string    name           = 1;
+  Algorithm algorithm      = 2;
+  int32     limit          = 3;
+  int32     window_seconds = 4;
+  int32     refill_rate    = 5;
+  int32     leak_rate      = 6;
+}
+
+message CheckLimitRequest{
+  string key         = 1;
+  string policy_name = 2;
+  int32  cost        = 3;
+}
+
+message CheckLimitResponse{
+  bool   allowed        = 1;
+  int32  remaining      = 2;
+  int64  reset_at_unix  = 3;
+  string algorithm_used = 4;
+  int64  retry_after_ms = 5;
+}
+
+message ResetLimitRequest {
+  string key         = 1;
+  string policy_name = 2;
+}
+
+message ResetLimitResponse {
+  bool success = 1;
+}
+
+message GetStatusRequest {
+  string key         = 1;
+  string policy_name = 2;
+}
+
+message GetStatusResponse {
+  int32  remaining      = 1;
+  int32  limit          = 2;
+  int64  reset_at_unix  = 3;
+  string algorithm_used = 4;
+}

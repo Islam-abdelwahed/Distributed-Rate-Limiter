@@ -1,0 +1,34 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis-data:/data
+
+  rate-limiter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      NODE_ENV: production
+      GRPC_PORT: 50051
+      REDIS_URL: redis://redis:6379
+      REDIS_KEY_PREFIX: rl
+      LOG_LEVEL: info
+      POLICIES_FILE: /app/policies.json
+    volumes:
+      - ./policies.example.json:/app/policies.json:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:

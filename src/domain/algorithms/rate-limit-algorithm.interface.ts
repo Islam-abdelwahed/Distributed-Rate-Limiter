@@ -1,7 +1,7 @@
 import {
   AlgorithmType,
   RateLimitPolicy,
-} from "@domain/entities/rate-limit-algorithm.entity";
+} from "@domain/entities/rate-limit-policy.entity";
 
 export interface RateLimitDecision<TState> {
   allowed: boolean;
